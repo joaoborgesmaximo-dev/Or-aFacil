@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10251f">
+  <title>OrçaFácil | Gestão de orçamentos</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/script.js" defer></script>
+  <script src="js/chat.js" defer></script>
+</head>
+<body>
+  <section id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <div class="brand-mark">OF</div>
+      <p class="eyebrow">GESTÃO SIMPLES E ORGANIZADA</p>
+      <h1>OrçaFácil</h1>
+      <p class="muted">Organize clientes, serviços e orçamentos em um só lugar.</p>
+
+      <div id="worker-auth">
+        <form id="login-form" class="form-stack">
+          <h2>Entrar na sua conta</h2>
+          <label>E-mail<input id="login-email" type="email" required autocomplete="username"></label>
+          <label>Senha<input id="login-password" type="password" required autocomplete="current-password"></label>
+          <button class="button primary" type="submit">Entrar</button>
+          <p class="form-note">Ainda não tem conta? <button type="button" class="text-button" id="show-register">Criar conta</button></p>
+          <p id="auth-message" class="message" aria-live="polite"></p>
+        </form>
+
+        <form id="register-form" class="form-stack" hidden>
+          <h2>Criar conta de trabalhador</h2>
+          <label>Nome<input id="register-name" required autocomplete="name"></label>
+          <label>E-mail<input id="register-email" type="email" required autocomplete="email"></label>
+          <label>Senha<input id="register-password" type="password" minlength="6" required autocomplete="new-password"></label>
+          <button class="button primary" type="submit">Cadastrar</button>
+          <p class="form-note">Já tem conta? <button type="button" class="text-button" id="show-login">Voltar ao login</button></p>
+          <p id="register-message" class="message" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div class="client-access">
+        <span>É cliente?</span>
+        <button type="button" class="text-button" id="show-client-access">Acessar área do cliente</button>
+      </div>
+
+      <section id="client-auth-panel" hidden>
+        <form id="client-login-form" class="form-stack">
+          <h2>Login do cliente</h2>
+          <label>E-mail<input id="client-login-email" type="email" required></label>
+          <label>Senha<input id="client-login-password" type="password" required></label>
+          <button class="button primary" type="submit">Entrar no chat</button>
+          <p class="form-note">Primeiro acesso? <button type="button" class="text-button" id="client-show-register">Criar acesso</button></p>
+          <p class="form-note"><button type="button" class="text-button" id="client-back-worker-login">Voltar</button></p>
+          <p id="client-auth-message" class="message" aria-live="polite"></p>
+        </form>
+        <form id="client-register-form" class="form-stack" hidden>
+          <h2>Criar acesso de cliente</h2>
+          <label>Seu nome<input id="client-register-name" required></label>
+          <label>Seu e-mail<input id="client-register-email" type="email" required></label>
+          <label>E-mail do trabalhador<input id="client-register-worker-email" type="email" required></label>
+          <label>Senha (mínimo 6 caracteres)<input id="client-register-password" type="password" minlength="6" required></label>
+          <label>Confirmar senha<input id="client-register-confirm" type="password" minlength="6" required></label>
+          <button class="button primary" type="submit">Criar acesso</button>
+          <p class="form-note">Já possui acesso? <button type="button" class="text-button" id="client-show-login">Fazer login</button></p>
+          <p id="client-register-message" class="message" aria-live="polite"></p>
+        </form>
+      </section>
+      <p class="demo-warning">Versão demonstrativa: os dados ficam salvos somente neste navegador.</p>
+    </div>
+  </section>
+
+  <div id="app-container" class="app-shell" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="#" data-page="dashboard"><span class="brand-mark small">OF</span><span>OrçaFácil</span></a>
+      <div class="worker-mini">
+        <div class="avatar" id="worker-avatar">O</div>
+        <div><strong id="worker-name">Trabalhador</strong><small>Minha conta</small></div>
+      </div>
+      <nav class="nav-menu">
+        <button class="nav-link active" data-page="dashboard">◫ <span>Painel</span></button>
+        <button class="nav-link" data-page="clientes">♙ <span>Clientes</span></button>
+        <button class="nav-link" data-page="servicos">◇ <span>Serviços</span></button>
+        <button class="nav-link" data-page="novo-orcamento">＋ <span>Novo orçamento</span></button>
+        <button class="nav-link" data-page="orcamentos">▤ <span>Orçamentos</span></button>
+        <button class="nav-link" data-page="chat">▧ <span>Chat</span></button>
+        <button class="nav-link" data-page="perfil">⚙ <span>Meu perfil</span></button>
+      </nav>
+      <button id="logout-button" class="button logout-button">Sair da conta</button>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div><p class="eyebrow">ÁREA DE TRABALHO</p><h1 id="page-title">Painel</h1></div>
+        <span class="today" id="today-label"></span>
+      </header>
+
+      <section class="page active" id="page-dashboard">
+        <div class="welcome-card"><div><p class="eyebrow">BEM-VINDO AO ORÇAFÁCIL</p><h2>Seu negócio, mais organizado.</h2><p>Acompanhe seus orçamentos e mantenha tudo sob controle.</p></div><span class="welcome-symbol">↗</span></div>
+        <div class="stats-grid">
+          <article class="stat-card"><span>Clientes cadastrados</span><strong id="stat-clients">0</strong></article>
+          <article class="stat-card"><span>Serviços cadastrados</span><strong id="stat-services">0</strong></article>
+          <article class="stat-card"><span>Orçamentos pendentes</span><strong id="stat-pending">0</strong></article>
+          <article class="stat-card"><span>Total aprovado</span><strong id="stat-value">R$ 0,00</strong></article>
+        </div>
+        <section class="panel"><div class="panel-heading"><div><p class="eyebrow">ACOMPANHAMENTO</p><h2>Orçamentos recentes</h2></div><button class="button secondary" data-go="orcamentos">Ver todos</button></div>
+          <div class="table-wrap"><table><thead><tr><th>Número</th><th>Cliente</th><th>Data</th><th>Valor</th><th>Status</th></tr></thead><tbody id="recent-quotes"></tbody></table></div>
+        </section>
+      </section>
+
+      <section class="page" id="page-clientes">
+        <section class="panel"><div class="panel-heading"><div><p class="eyebrow">CADASTRO</p><h2 id="client-form-title">Adicionar cliente</h2></div></div>
+          <form id="client-form" class="form-grid">
+            <input type="hidden" id="client-id">
+            <label>Nome completo<input id="client-name" required></label>
+            <label>Telefone<input id="client-phone" placeholder="(00) 00000-0000"></label>
+            <label>E-mail<input id="client-email" type="email"></label>
+            <label>Endereço<input id="client-address"></label>
+            <div class="form-actions"><button class="button primary" type="submit">Salvar cliente</button><button class="button secondary" type="button" id="cancel-client-edit" hidden>Cancelar edição</button></div>
+          </form>
+        </section>
+        <section class="panel"><div class="panel-heading"><div><p class="eyebrow">SUA CARTEIRA</p><h2>Clientes</h2></div><input class="search-input" id="search-clients" placeholder="Pesquisar cliente"></div>
+          <div class="table-wrap"><table><thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Ações</th></tr></thead><tbody id="clients-list"></tbody></table></div>
+        </section>
+      </section>
+
+      <section class="page" id="page-servicos">
+        <section class="panel"><div class="panel-heading"><div><p class="eyebrow">CATÁLOGO</p><h2 id="service-form-title">Adicionar serviço</h2></div></div>
+          <form id="service-form" class="form-grid">
+            <input type="hidden" id="service-id">
+            <label>Nome do serviço<input id="service-name" required></label>
+            <label>Preço (R$)<input id="service-price" type="number" min="0" step="0.01" required></label>
+            <label class="full-width">Descrição<textarea id="service-description" rows="2"></textarea></label>
+            <div class="form-actions"><button class="button primary" type="submit">Salvar serviço</button><button class="button secondary" type="button" id="cancel-service-edit" hidden>Cancelar edição</button></div>
+          </form>
+        </section>
+        <section class="panel"><div class="panel-heading"><div><p class="eyebrow">SEUS SERVIÇOS</p><h2>Catálogo</h2></div><input class="search-input" id="search-services" placeholder="Pesquisar serviço"></div>
+          <div class="table-wrap"><table><thead><tr><th>Serviço</th><th>Descrição</th><th>Preço</th><th>Ações</th></tr></thead><tbody id="services-list"></tbody></table></div>
+        </section>
+      </section>
+
+      <section class="page" id="page-novo-orcamento">
+        <section class="panel form-panel"><div class="panel-heading"><div><p class="eyebrow">NOVO DOCUMENTO</p><h2>Montar orçamento</h2></div></div>
+          <form id="quote-form" class="form-grid">
+            <label>Cliente<select id="quote-client" required><option value="">Selecione um cliente</option></select></label>
+            <label>Serviço<select id="quote-service" required><option value="">Selecione um serviço</option></select></label>
+            <label>Preço unitário (R$)<input id="quote-price" type="number" min="0" step="0.01" readonly></label>
+            <label>Quantidade<input id="quote-quantity" type="number" min="1" step="1" value="1" required></label>
+            <label>Desconto (%)<input id="quote-discount" type="number" min="0" max="100" value="0"></label>
+            <label>Validade (dias)<input id="quote-validity" type="number" min="1" value="7" required></label>
+            <label class="full-width">Observações<textarea id="quote-notes" rows="3" placeholder="Detalhes adicionais..."></textarea></label>
+            <div class="quote-total-box"><span>Valor total</span><strong id="quote-total">R$ 0,00</strong></div>
+            <div class="form-actions"><button class="button primary" type="submit">Criar orçamento</button></div>
+          </form>
+        </section>
+      </section>
+
+      <section class="page" id="page-orcamentos">
+        <section class="panel"><div class="panel-heading"><div><p class="eyebrow">DOCUMENTOS</p><h2>Todos os orçamentos</h2></div><input class="search-input" id="search-quotes" placeholder="Pesquisar número ou cliente"></div>
+          <div class="table-wrap"><table><thead><tr><th>Número</th><th>Cliente</th><th>Data</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead><tbody id="quotes-list"></tbody></table></div>
+        </section>
+      </section>
+
+      <section class="page" id="page-chat">
+        <section class="panel chat-panel"><div class="panel-heading"><div><p class="eyebrow">ATENDIMENTO</p><h2>Chat com clientes</h2></div></div>
+          <div class="worker-chat-layout">
+            <aside class="contacts-column"><input id="worker-chat-search" class="search-input" placeholder="Buscar cliente"><div id="worker-chat-contacts" class="contacts-list"></div></aside>
+            <div class="worker-chat-window">
+              <div id="worker-chat-empty" class="chat-empty"><strong>Suas conversas</strong><p>Selecione um cliente para visualizar as mensagens.</p></div>
+              <div id="worker-chat-active" class="chat-active" hidden>
+                <div class="conversation-header"><div class="avatar" id="worker-chat-avatar">C</div><div><strong id="worker-chat-name">Cliente</strong><small id="worker-chat-email"></small></div></div>
+                <div id="worker-chat-messages" class="messages-area"></div>
+                <form id="worker-chat-form" class="message-form"><input id="worker-chat-input" placeholder="Digite sua mensagem..." autocomplete="off" required><button class="button primary" type="submit">Enviar</button></form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" id="page-perfil">
+        <section class="panel"><div class="panel-heading"><div><p class="eyebrow">CONFIGURAÇÕES</p><h2>Meu perfil</h2></div></div>
+          <form id="profile-form" class="form-grid">
+            <label>Nome<input id="profile-name" required></label>
+            <label>E-mail<input id="profile-email" type="email" disabled></label>
+            <div class="form-actions"><button class="button primary" type="submit">Salvar alterações</button></div>
+          </form>
+        </section>
+        <section class="panel"><div class="panel-heading"><div><p class="eyebrow">SEGURANÇA</p><h2>Alterar senha</h2></div></div>
+          <form id="password-form" class="form-grid">
+            <label>Senha atual<input id="current-password" type="password" required></label>
+            <label>Nova senha<input id="new-password" type="password" minlength="6" required></label>
+            <div class="form-actions"><button class="button primary" type="submit">Alterar senha</button></div>
+          </form>
+        </section>
+      </section>
+      <footer class="footer">OrçaFácil · Versão demonstrativa</footer>
+    </main>
+  </div>
+
+  <section id="client-portal" class="client-portal" hidden>
+    <header class="portal-header"><div class="brand"><span class="brand-mark small">OF</span><span>OrçaFácil</span></div><button id="client-logout-btn" class="button secondary">Sair</button></header>
+    <main class="portal-main"><section class="panel portal-card">
+      <div class="conversation-header"><div class="avatar" id="client-worker-avatar">T</div><div><strong id="client-worker-name">Trabalhador</strong><small id="client-worker-label">Conversa com seu profissional</small></div></div>
+      <div class="portal-greeting">Olá, <strong id="client-portal-name">Cliente</strong>!</div>
+      <div id="client-chat-messages" class="messages-area client-messages"></div>
+      <form id="client-chat-form" class="message-form"><input id="client-chat-input" placeholder="Digite sua mensagem..." autocomplete="off" required><button class="button primary" type="submit">Enviar</button></form>
+    </section></main>
+  </section>
+
+  <section id="print-area" class="print-area"></section>
+</body>
+</html>
